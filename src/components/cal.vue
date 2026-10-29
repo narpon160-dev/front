@@ -45,7 +45,7 @@
         <thead>
           <tr>
             <th>รายการ</th>
-            <th>เลขครั้งที่</th>
+            <th>เลขครั้งนี้</th>
             <th>เลขครั้งก่อน</th>
             <th>หน่วยใช้ไป</th>
             <th>หน่วยละ</th>
@@ -56,7 +56,7 @@
           <!-- ค่าไฟ -->
           <tr>
             <td data-label="รายการ" class="item-name">⚡ ค่าไฟฟ้า</td>
-            <td data-label="เลขครั้งที่">
+            <td data-label="เลขครั้งนี้">
               <input type="number" v-model.number="electricity.current" />
             </td>
             <td data-label="เลขครั้งก่อน">
@@ -75,7 +75,7 @@
           <!-- ค่าน้ำ -->
           <tr>
             <td data-label="รายการ" class="item-name">💧 ค่าน้ำประปา</td>
-            <td data-label="เลขครั้งที่">
+            <td data-label="เลขครั้งนี้">
               <input type="number" v-model.number="water.current" />
             </td>
             <td data-label="เลขครั้งก่อน">
@@ -428,9 +428,20 @@ const fetchBills = async () => {
   try {
     const res = await fetch("https://kkk-sf90.onrender.com/api/bills");
     billsHistory.value = await res.json();
+    if (!isEditing.value) fillPreviousReadings();
   } catch (err) {
     console.error("ไม่สามารถดึงข้อมูลได้", err);
   }
+};
+
+// เอาเลขครั้งนี้ของบิลล่าสุดของห้องนี้ มาเป็นเลขครั้งก่อนของบิลใหม่
+const fillPreviousReadings = () => {
+  const last = [...filteredBillsHistory.value].sort((a, b) =>
+    (b.billDate || "").localeCompare(a.billDate || ""),
+  )[0];
+  if (!last) return;
+  electricity.value.previous = last.electricity?.current ?? 0;
+  water.value.previous = last.water?.current ?? 0;
 };
 
 const saveBill = async () => {
@@ -466,8 +477,12 @@ const saveBill = async () => {
       alert(
         isEditing.value ? "✅ อัปเดตข้อมูลสำเร็จ!" : "✅ บันทึกบิลใหม่สำเร็จ!",
       );
-      fetchBills();
       if (isEditing.value) cancelEdit();
+      else {
+        electricity.value.current = 0;
+        water.value.current = 0;
+      }
+      fetchBills();
     } else {
       alert("❌ บันทึกล้มเหลว");
     }
@@ -502,6 +517,7 @@ const cancelEdit = () => {
   roomRent.value = getDefaultRent();
   electricity.value = { current: 0, previous: 0, rate: 7 };
   water.value = { current: 0, previous: 0, rate: 25 };
+  fillPreviousReadings();
   loadSavedExtraItemsTemplate();
 };
 
