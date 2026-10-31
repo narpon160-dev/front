@@ -1338,9 +1338,9 @@ input[readonly] {
   }
   .custom-print-date {
     display: block !important;
-    position: absolute;
-    top: 10mm;
-    left: 10mm;
+    width: 150mm;
+    max-width: 100%;
+    margin: 10mm auto 3mm auto;
     font-size: 14px;
     color: #000;
   }
@@ -1350,7 +1350,7 @@ input[readonly] {
     width: 150mm;
     max-width: 100%;
     box-sizing: border-box;
-    margin: 25mm auto 0 auto;
+    margin: 0 auto;
   }
 
   .receipt-header p {
