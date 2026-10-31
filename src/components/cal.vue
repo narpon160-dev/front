@@ -254,10 +254,10 @@
                 </td>
                 <td align="center">{{ selectedBill.electricity.units }}</td>
                 <td align="center">
-                  {{ selectedBill.electricity.rate.toLocaleString() }}
+                  {{ money(selectedBill.electricity.rate) }}
                 </td>
                 <td align="right">
-                  {{ selectedBill.electricity.cost.toLocaleString() }}
+                  {{ money(selectedBill.electricity.cost) }}
                 </td>
               </tr>
               <tr>
@@ -270,10 +270,10 @@
                 </td>
                 <td align="center">{{ selectedBill.water.units }}</td>
                 <td align="center">
-                  {{ selectedBill.water.rate.toLocaleString() }}
+                  {{ money(selectedBill.water.rate) }}
                 </td>
                 <td align="right">
-                  {{ selectedBill.water.cost.toLocaleString() }}
+                  {{ money(selectedBill.water.cost) }}
                 </td>
               </tr>
               <tr>
@@ -281,7 +281,7 @@
                 <td align="center">-</td>
                 <td align="center">-</td>
                 <td align="right">
-                  {{ selectedBill.roomRent.toLocaleString() }}
+                  {{ money(selectedBill.roomRent) }}
                 </td>
               </tr>
 
@@ -292,7 +292,7 @@
                 </td>
                 <td align="center">-</td>
                 <td align="center">-</td>
-                <td align="right">{{ extra.cost.toLocaleString() }}</td>
+                <td align="right">{{ money(extra.cost) }}</td>
               </tr>
             </tbody>
             <tfoot>
@@ -532,6 +532,9 @@ const deleteBill = async (id) => {
     alert("ลบไม่สำเร็จ");
   }
 };
+
+// ช่องตัวเลขที่เว้นว่างจะถูกบันทึกเป็น null ทำให้ toLocaleString พังและใบเสร็จไม่ขึ้น
+const money = (value) => (value || 0).toLocaleString();
 
 const viewBill = (bill) => {
   selectedBill.value = bill;
@@ -1066,6 +1069,8 @@ input[readonly] {
   margin-top: 20px;
 }
 .modal-footer {
+  position: sticky;
+  bottom: 0;
   padding: 15px 20px;
   background: #f8fafc;
   border-top: 1px solid #e2e8f0;
@@ -1310,14 +1315,13 @@ input[readonly] {
   .bill-container {
     margin: 0 !important;
     padding: 0 !important;
+    overflow: visible !important;
     box-shadow: none !important;
     background: transparent !important;
   }
 
   .modal-overlay {
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
+    position: static !important;
     width: 100% !important;
     height: auto !important;
     background: none !important;
@@ -1328,6 +1332,8 @@ input[readonly] {
     box-shadow: none !important;
     border: none !important;
     max-width: 100% !important;
+    max-height: none !important;
+    overflow: visible !important;
     margin: 0 !important;
   }
   .custom-print-date {
@@ -1342,6 +1348,8 @@ input[readonly] {
     border: 1px solid #000;
     padding: 30px;
     width: 150mm;
+    max-width: 100%;
+    box-sizing: border-box;
     margin: 25mm auto 0 auto;
   }
 
